@@ -1,59 +1,34 @@
 package com.company;
 
-public class Client {
-    //TODO data typer korrekte?
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
 
-    String username;
-    String ip;
-    String port;
-    int heartbeat;
+public class Client implements Runnable {
 
-    public Client(String username, String ip, String port, int heartbeat) {
-        this.username = username;
-        this.ip = ip;
-        this.port = port;
-        this.heartbeat = heartbeat;
-    }
+    Scanner scn = new Scanner(System.in);
 
-    public String getUsername() {
-        return username;
-    }
+    final DataInputStream input;
+    final DataOutputStream output;
+    Socket s;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
-    public String getIp() {
-        return ip;
-    }
+    public Client(Socket s, DataInputStream input, DataOutputStream output) {
+        this.s = s;
+        this.input = input;
+        this.output = output;
 
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public int getHeartbeat() {
-        return heartbeat;
-    }
-
-    public void setHeartbeat(int heartbeat) {
-        this.heartbeat = heartbeat;
     }
 
     @Override
-    public String toString() {
-        return "Client{" +
-                "username='" + username + '\'' +
-                ", ip='" + ip + '\'' +
-                ", port='" + port + '\'' +
-                ", heartbeat=" + heartbeat +
-                '}';
+    public void run() {
+        String received;
+
+        while(true)
+        {
+
+        }
+
     }
 }
