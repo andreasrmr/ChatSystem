@@ -4,9 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
-public class Threads implements Runnable  {
+public class Threads {
 
     static DataOutputStream output;
     static DataInputStream input;
@@ -16,24 +17,28 @@ public class Threads implements Runnable  {
     static String user_name;
 
 
-    public Threads(Socket socket, String user_name){
+    public Threads(Socket socket, String user_name) {
         this.socket = socket;
         this.user_name = user_name;
-        scan = new Scanner(System.in);
-        try {
-            output = new DataOutputStream(socket.getOutputStream());
-            input = new DataInputStream(socket.getInputStream());
-        }catch (IOException e){
-            e.printStackTrace();
+
+    }
+    private static class ConnectionThread implements Runnable {
+        public ConnectionThread(){
+
         }
-        run();
-    }
+        @Override
+        public void run(){
 
-    @Override
-    public void run() {
-        connectionProtocol();
+        }
     }
+    private static class SendMessages extends ConnectionThread{
 
+    }
+    private static class ReadMessages extends ConnectionThread{
+
+    }
+}
+/*
     public static void connectionProtocol() {
 
         //Modtag besked fra server at der er connected
@@ -42,6 +47,7 @@ public class Threads implements Runnable  {
             connOk = input.readUTF();
             if (connOk.equals("J_OK")) {
                 System.out.println("Client connected successfully");
+
                 startReadMessage();
                 startSendMessage();
 
@@ -57,37 +63,10 @@ public class Threads implements Runnable  {
 
     }
 
-    public static void startReadMessage(){
-        //Thread der afventer på indkommende beskeder
-        Thread readMessage = new Thread();
-            System.out.println("Client ready to receive messages");
-            try {
-                while(true){
-                    System.out.println(input.readUTF());
-                }
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-    }
+
 
     public static void startSendMessage(){
-        sendMessage = new Thread();
 
-        System.out.println("Client ready to send messages");
-        try {
-            String msgToSend = "";
-
-            while (!msgToSend.equals("logout")){
-                //Send besked til server.
-                msgToSend = scan.nextLine();
-                output.writeUTF(msgToSend);
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-        sendMessage.setDaemon(true);
-        sendMessage.run();
     }
+*/
 
-}

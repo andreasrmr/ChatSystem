@@ -10,33 +10,40 @@ public class SendMessages implements Runnable {
     static DataOutputStream output;
     static Socket socket;
     static Scanner scan = new Scanner(System.in);
+    static String user_name;
 
-    public SendMessages(Socket socket){
+    public SendMessages(){}
+    public SendMessages(Socket socket, String user_name){
         this.socket = socket;
+        this.user_name = user_name;
         try {
             this.output = new DataOutputStream(socket.getOutputStream());
+            //Send username til server
+            output.writeUTF(user_name);
         }catch (IOException e){
             e.printStackTrace();
         }
-        run();
+
     }
 
     @Override
     public void run() {
-        Thread sendMessage = new Thread (() -> {
-            System.out.println("Client ready to send messages");
-            try {
-                String msgToSend = "";
-                while (!msgToSend.equals("logout")){
-                    //Send besked til server.
-                    msgToSend = scan.nextLine();
-                    output.writeUTF(msgToSend);
-                }
-            }catch (IOException e){
+        String msgToSend = "";
+        System.out.println("Client ready to send messages");
+        while(!msgToSend.equals("logout")){
+            msgToSend = scan.nextLine();
+            try{
+                output.writeUTF(msgToSend);
+            }catch(IOException e){
                 e.printStackTrace();
             }
-        });
-        sendMessage.setDaemon(true);
-        sendMessage.start();
+        }
+    }
+    public static void sendMSG(String msg){
+        try{
+            output.writeUTF(msg);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

@@ -2,32 +2,44 @@ package com.company;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client implements Runnable {
 
-    Scanner scn = new Scanner(System.in);
-
     final DataInputStream input;
     final DataOutputStream output;
-    Socket s;
+    Socket socket;
+    String user_name;
 
 
-    public Client(Socket s, DataInputStream input, DataOutputStream output) {
-        this.s = s;
+    public Client(Socket socket, DataInputStream input, DataOutputStream output) {
+        this.socket = socket;
         this.input = input;
         this.output = output;
 
     }
 
+    //lyt på beskeder og udskriv.
     @Override
     public void run() {
-        String received;
+        String receivedMsg;
 
-        while(true)
-        {
+        try {
+            //Lyt på beskeder fra klient
+            while(true){
+                receivedMsg = input.readUTF();
+                //Udskriv beskeder.
+                if(receivedMsg.equals("logout")){
+                    socket.close();
+                }
+                else {
+                    System.out.println(receivedMsg);
+                }
 
+            }
+        }catch (IOException e){
+            e.printStackTrace();
         }
 
     }

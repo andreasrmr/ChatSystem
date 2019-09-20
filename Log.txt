@@ -1,0 +1,50 @@
+d. 18/09/2019
+
+Krav:
+
+////Client-side.
+
+1. Klient skal spørge bruger om brugernavn.
+2. Klienten skal derefter sende en join message til serveren?
+3. Klienten skal sende en besked til serveren at den er i live hvert minut.
+4. Klienten skal sende en quit besked når den lukker ned.
+5. Se protokol for klient / server.
+
+
+////Server-side.
+1. Skal acceptere klienter der forsøger at joine
+2. Serveren skal holde en liste over alle connectede klienter.
+3. Serveren bliver nød til at gemme brugernavn, ip-adresse og port.(heartbeat alive?)
+4. 2 klienter må ikke hedde det samme. Der skal sendes en fejl til brugeren.
+5. En aktiv klient som sender en besked - sender denne besked ud til alle klienter.
+6. Hvis serveren ikke har hørt fra en klient i et minut skal den slette denne fra listen.
+7. Brug en thread pool og limit numre af klienter der kan bruges.
+
+8. Enable the system to log transaktions <<timestamp>> + <<request>> and <<timestamp>> + <<response>>
+Requests not following the protocol should give an error response back to the client and of course log the event.
+
+9. Se protokol for klient / server.
+
+
+//Tanker 18/09/2019 forsat.
+Planlægning:
+Lav klientliste (server-side) //Overvejer en singleton.
+Find ud af hvordan der skal sendes fra klient til server. 
+
+ToDos:
+Se billede
+
+
+//19/09/2019
+På Server: Lav en klasse for klienter der indeholder inputstream og outputstream for hver klient og tildel dem en thread
+
+//20/09/2019
+Main thread på server aflytter nye klienter. Jeg vil forsøge og flytte input / output 
+ind i client klassen for så den har mindst muligt og lave. -> Det gav nogle uforudsete exceptions, så jeg har reversed.
+--
+Skal finde en måde at verificere brugerinputtet omkring join. på TODO.
+--
+Tænker at lave en klasse der indeholder protokollen.
+-- 
+Mine main klasser bliver alt for store så jeg vil dele ansvar ud.
+

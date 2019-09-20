@@ -3,18 +3,18 @@ package com.company;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/*
 //Overvej 1 singleton her.
 public class ClientList {
 
-    private static  ClientList instance;
+    private static ClientList instance;
     List<Client> clientList;
 
     private ClientList() {
         clientList = new ArrayList<Client>();
     }
 
-    //TODO Singleton:  skal threadsikres?! Kig i min bog / course
+
     public static ClientList fetchInstance(){
         if(instance == null){
             instance = new ClientList();
@@ -49,3 +49,4 @@ public class ClientList {
         }
     }
 }
+*/
