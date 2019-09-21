@@ -13,6 +13,7 @@ public class SendMessages implements Runnable {
     static String user_name;
 
     public SendMessages(){}
+
     public SendMessages(Socket socket, String user_name){
         this.socket = socket;
         this.user_name = user_name;
@@ -28,15 +29,14 @@ public class SendMessages implements Runnable {
 
     @Override
     public void run() {
-        String msgToSend = "";
+        String msg = "";
         System.out.println("Client ready to send messages");
-        while(!msgToSend.equals("QUIT")){
-            msgToSend = scan.nextLine();
-            try{
-                output.writeUTF(msgToSend);
-            }catch(IOException e){
-                e.printStackTrace();
+        while(true){
+            msg = scan.nextLine();
+            if(msg.equals("QUIT")){
+                Thread.currentThread().interrupt();
             }
+            sendMSG(msg);
         }
     }
     public static void sendMSG(String msg){

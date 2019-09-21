@@ -4,8 +4,7 @@ Krav:
 
 ////Client-side.
 
-1. Klient skal spørge bruger om brugernavn.
-2. Klienten skal derefter sende en join message til serveren?
+1. Klient afsender join message - JOIN Johnny, 10.10.3.20:20023
 3. Klienten skal sende en besked til serveren at den er i live hvert minut.
 4. Klienten skal sende en quit besked når den lukker ned.
 5. Se protokol for klient / server.
@@ -46,5 +45,12 @@ Skal finde en måde at verificere brugerinputtet omkring join. på TODO.
 --
 Tænker at lave en klasse der indeholder protokollen.
 -- 
-Mine main klasser bliver alt for store så jeg vil dele ansvar ud.
+Mine main klasser bliver alt for store så jeg vil dele ansvar ud. - Dette er gjort på klienten. 
+--
+21/09/2019
+Jeg vil forsøge at lave en Protokol klasse på serveren. Som Klienterne arver fra. Dvs. de kan bruge metoderne til at sende / modtage besked med deres egen socket.
+---
+Server: Overvejer hvordan jeg skal undgå at 2 threads støder sammen. når den ene skal tilføje til listen og den anden fjerne.
+-- 
+Server: Overvejer at lave en ClientListe 
 

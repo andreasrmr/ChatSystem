@@ -1,42 +1,49 @@
 package com.company;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
+import java.net.InetAddress;
 
-public class Client implements Runnable {
+public class Client {
+    String user_name;
+    int port;
+    InetAddress ip;
+    int heartbeat;
 
-    final DataInputStream input;
-    final DataOutputStream output;
-    static Socket socket;
-
-    public Client(Socket socket, DataInputStream input, DataOutputStream output) {
-        this.socket = socket;
-        this.input = input;
-        this.output = output;
+    public Client(String user_name, int port, InetAddress ip, int heartbeat) {
+        this.user_name = user_name;
+        this.port = port;
+        this.ip = ip;
+        this.heartbeat = heartbeat;
     }
 
-    //lyt på beskeder og udskriv.
-    @Override
-    public void run() {
-        String receivedMsg;
-        try {
-            //Lyt på beskeder fra klient
-            while(true){
-                receivedMsg = input.readUTF();
-                //Udskriv beskeder.
-                if(receivedMsg.equals("QUIT")){
-                    socket.close();
-                }
-                else {
-                    System.out.println(receivedMsg);
-                }
+    public String getUser_name() {
+        return user_name;
+    }
 
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public InetAddress getIp() {
+        return ip;
+    }
+
+    public void setIp(InetAddress ip) {
+        this.ip = ip;
+    }
+
+    public int getHeartbeat() {
+        return heartbeat;
+    }
+
+    public void setHeartbeat(int heartbeat) {
+        this.heartbeat = heartbeat;
     }
 }

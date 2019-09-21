@@ -11,21 +11,23 @@ import java.util.List;
 public class Server {
 
     private static ServerSocket serverSocket;
-    private static Socket socket;
-    private static List<Thread> threadList = new ArrayList<>();
+    static Protocol protocol;
+
 
     public Server(int port_number) throws IOException {
 
         //Opret socket til server på port.
         serverSocket = new ServerSocket(port_number);
 
-        //start Server
-        startServer();
+        //Opret protocol
+        protocol = new Protocol();
 
+
+        startServer();
 
     }
     public static void startServer(){
-
+        Socket socket = new Socket();
             try {
                 //afvent på klient forbinder.
                 while (true) {
@@ -44,35 +46,16 @@ public class Server {
                     }
                     System.out.println("Username: " + user_name + " Received");
 
+                    if(protocol.nameCheck(user_name)){
+                        ClientHandler clientHandler = new ClientHandler(socket, input, output, user_name);
+                        Thread clientThread = new Thread(clientHandler, user_name);
+                        clientThread.start();
+                        protocol.addThread(clientThread);
+                        protocol.addClient(new Client(user_name, socket.getPort(), socket.getInetAddress(), 60));
 
-                    //namecheck
-                    //Tester at to ikke kan hedde det samme.
-                    //TODO skal testes.
-                    boolean nameCheck = false;
-                    if(threadList.size() != 0){
-                        for(Thread thread : threadList){
-                            if(thread.getName().equals(user_name)){
-                                //send error message to client.
-                                System.out.println("Name check");
-                            }
-                            else {
-                                nameCheck = true;
-                            }
-                        }
                     }
                     else {
-                        nameCheck = true;
-                    }
-                    if(nameCheck = true){
-                        output.writeUTF("J_OK");
-                        Client client = new Client(socket, input, output);
-                        Thread newClient = new Thread(client, user_name);
-                        //newClient.setDaemon(true);
-                        newClient.start();
-                        threadList.add(newClient);
-                    }
-                    else {
-                        output.writeUTF("error JOIN not ok");
+                        protocol.J_ERR("username not correct");
                     }
 
                 }
@@ -81,6 +64,7 @@ public class Server {
             } finally {
                 try {
                     socket.close();
+
                 } catch (Exception e) {
                 }
             }
