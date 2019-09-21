@@ -33,12 +33,9 @@ public class Server {
                     socket = serverSocket.accept();
                     System.out.println("New client request accepted" + socket);
 
-
                     //input / output
                     DataInputStream input = new DataInputStream(socket.getInputStream());
                     DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-
-                    output.writeUTF("J_OK");
 
                     //Modtag brugernavn.
                     String user_name = "";
@@ -48,16 +45,35 @@ public class Server {
                     System.out.println("Username: " + user_name + " Received");
 
 
-                    Thread t = new Thread(() -> {
+                    //namecheck
+                    //Tester at to ikke kan hedde det samme.
+                    //TODO skal testes.
+                    boolean nameCheck = false;
+                    if(threadList.size() != 0){
+                        for(Thread thread : threadList){
+                            if(thread.getName().equals(user_name)){
+                                //send error message to client.
+                                System.out.println("Name check");
+                            }
+                            else {
+                                nameCheck = true;
+                            }
+                        }
+                    }
+                    else {
+                        nameCheck = true;
+                    }
+                    if(nameCheck = true){
+                        output.writeUTF("J_OK");
                         Client client = new Client(socket, input, output);
-                        client.run();
-                    });
-
-                    t.setDaemon(true);
-                    t.start();
-
-                    threadList.add(t);
-
+                        Thread newClient = new Thread(client, user_name);
+                        //newClient.setDaemon(true);
+                        newClient.start();
+                        threadList.add(newClient);
+                    }
+                    else {
+                        output.writeUTF("error JOIN not ok");
+                    }
 
                 }
             } catch (Exception e) {

@@ -9,28 +9,24 @@ public class Client implements Runnable {
 
     final DataInputStream input;
     final DataOutputStream output;
-    Socket socket;
-    String user_name;
-
+    static Socket socket;
 
     public Client(Socket socket, DataInputStream input, DataOutputStream output) {
         this.socket = socket;
         this.input = input;
         this.output = output;
-
     }
 
     //lyt på beskeder og udskriv.
     @Override
     public void run() {
         String receivedMsg;
-
         try {
             //Lyt på beskeder fra klient
             while(true){
                 receivedMsg = input.readUTF();
                 //Udskriv beskeder.
-                if(receivedMsg.equals("logout")){
+                if(receivedMsg.equals("QUIT")){
                     socket.close();
                 }
                 else {

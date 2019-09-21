@@ -30,7 +30,7 @@ public class SendMessages implements Runnable {
     public void run() {
         String msgToSend = "";
         System.out.println("Client ready to send messages");
-        while(!msgToSend.equals("logout")){
+        while(!msgToSend.equals("QUIT")){
             msgToSend = scan.nextLine();
             try{
                 output.writeUTF(msgToSend);

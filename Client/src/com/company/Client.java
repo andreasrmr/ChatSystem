@@ -42,13 +42,13 @@ public class Client {
 
         ReadMessages readMessages = new ReadMessages(socket);
         SendMessages sendMessages = new SendMessages(socket, user_name);
-        Heartbeart heartbeat = new Heartbeart();
+        //Heartbeart heartbeat = new Heartbeart();
 
         Thread readMsg = new Thread(readMessages, "ReadMessage");
         Thread sendMsg = new Thread(sendMessages, "SendMessage");
         //Thread heartBeat = new Thread(heartbeat, "Heartbeat");
-        readMsg.setDaemon(true);
-        sendMsg.setDaemon(true);
+        //readMsg.setDaemon(true);
+        //sendMsg.setDaemon(true);
        // heartBeat.setDaemon(true);
         readMsg.start();
         sendMsg.start();
@@ -64,7 +64,7 @@ public class Client {
                 SendMessages.sendMSG("IMAV");
             }
         });
-        heartBeat.setDaemon(true);
+        //heartBeat.setDaemon(true);
         heartBeat.start();
 
         while(sendMsg.isAlive()){
