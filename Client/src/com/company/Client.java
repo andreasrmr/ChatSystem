@@ -1,8 +1,9 @@
 package com.company;
 
-import com.company.threads.ReadMessages;
-import com.company.threads.SendMessages;
+import com.company.threads.Messages;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -13,63 +14,104 @@ public class Client {
     static String user_name;
     static String server_ip;
     static int server_port;
+    Socket socket;
+    static boolean isRunning = true;
 
-    public Client(){}
+    public Client(String server_ip, int server_port, String user_name){
+        this.server_ip = server_ip;
+        this.server_port = server_port;
+        this.user_name = user_name;
 
-    public static void start() throws IOException {
+        try {
+            start();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
-        //Vent for join message
-        waitForUserInput();
+    public void start() throws IOException {
+
+        //List<Thread> threads = new ArrayList<>();
 
         //Convert String ip til InetAddress ip.
         InetAddress ip = InetAddress.getByName(server_ip);
 
         //opret forbindelse til server
-        Socket socket = new Socket(ip, server_port);
+        this.socket = new Socket(ip, server_port);
 
-        ReadMessages readMessages = new ReadMessages(socket);
-        SendMessages sendMessages = new SendMessages(socket, user_name);
+        DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+        DataInputStream input = new DataInputStream(socket.getInputStream());
 
-        Thread readMsg = new Thread(readMessages, "ReadMessage");
-        Thread sendMsg = new Thread(sendMessages, "SendMessage");
+        //Send username som det første
+        output.writeUTF(user_name);
 
-        readMsg.start();
-        sendMsg.start();
+        //Scanner
+        Scanner scanner = new Scanner(System.in);
 
-        Thread heartBeat = new Thread(() -> {
-            while(true){
+        //Opret Separat Thread til at recieve messages.
+        Thread recieve = new Thread(() -> {
+            String msg;
+            while(isRunning == true){
+
                 try{
-                    Thread.sleep(55000);
-                }catch(InterruptedException e){
+                    msg = input.readUTF();
+                    switch (msg){
+                        case "QUIT":
+                            input.close();
+                            socket.close();
+                            break;
+                        default:
+                            System.out.println(msg);
+                            break;
+                    }
+                }catch (IOException e){
                     e.printStackTrace();
                 }
-                SendMessages.sendMSG("IMAV");
+
+
+
             }
         });
-        heartBeat.start();
 
-        while(sendMsg.isAlive()){
+        Thread heartbeat = new Thread(() -> {
+           while(isRunning == true){
+               try{
+                   Thread.sleep(59000   );
+                   output.writeUTF("IMAV");
+               }catch (InterruptedException e){
+                   e.printStackTrace();
+               }catch (IOException e){
+                   e.printStackTrace();
+               }
+           }
+
+        });
+
+        recieve.start();
+        heartbeat.start();
+        String msg = "";
+
+        //Send messages
+        while(isRunning == true){
+            msg = scanner.nextLine();
+            switch (msg){
+                case "QUIT":
+                    output.writeUTF("QUIT");
+                    output.flush();
+                    output.close();
+                    heartbeat.interrupt();
+                    recieve.interrupt();
+                    socket.close();
+                    isRunning = false;
+                    break;
+                default:
+                    output.writeUTF(msg);
+                    break;
+            }
+
+
         }
 
-        }
-
-        //Bruger får lov til at skrive input
-        //TODO Hardcoded pt. brugeren skal selv lave input
-        public static void waitForUserInput(){
-
-            //Scanner bruges til input fra brugeren.
-            Scanner scan = new Scanner(System.in);
-            //scan.nextLine();
-            server_port = 1234;
-            System.out.println("Enter username");
-            user_name = scan.nextLine();
-            server_ip = "127.0.0.1";
-
-            //Todo Verificer JOIN string på klient.
-            //
-            //if(connectStr.matches("(^join\\s\\w,\\s){1}(\\d\\.){3}\\d:(\\d){1,5}"))
-            //Eksempel: Join John, 127.0.0.1:2001
-        }
-
-
+    }
 }
+

@@ -53,4 +53,7 @@ Jeg vil forsøge at lave en Protokol klasse på serveren. Som Klienterne arver f
 Server: Overvejer hvordan jeg skal undgå at 2 threads støder sammen. når den ene skal tilføje til listen og den anden fjerne.
 -- 
 Server: Overvejer at lave en ClientListe 
-
+--
+KLient Messages klasse er overflødig.
+--
+Input stream kunne ikke være final.
