@@ -4,9 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.List;
-
 
 public class ClientHandler implements Runnable {
 
@@ -17,9 +14,15 @@ public class ClientHandler implements Runnable {
     boolean isRunning = true;
     int heartbeat;
 
-   // int heartbeat;
+    public ClientHandler(){}
 
     public ClientHandler(Socket socket, DataInputStream input, DataOutputStream output, String user_name) {
+        try{
+            output.writeUTF("J_OK");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
         this.socket = socket;
         this.input = input;
         this.output = output;

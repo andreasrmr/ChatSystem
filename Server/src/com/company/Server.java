@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
-import java.util.Vector;
 
 public class Server {
 
     private static ServerSocket serverSocket;
-    static Protocol protocol;
     static boolean isRunning = true;
 
     public Server(int port_number) throws IOException {
@@ -19,55 +17,57 @@ public class Server {
         //Opret socket til server på port.
         serverSocket = new ServerSocket(port_number);
 
-        //Opret protocol
-        protocol = new Protocol();
-
-        //Opret liste til clienter
-        //activeClients = new Vector<ClientHandler>();
-
-
-
+        //start server thread
         Thread waitForClients = new Thread(() -> {
             startServer();
         });
 
+        //ryd op i aktive klient liste. (Virker ikke efter jeg lavede en separat synchronized klasse der indeholdt listen)
         Thread cleanActiveClientsList = new Thread(() -> {
             while(isRunning){
-                ClientList cList = ClientList.getInstance();
+                //check hvert 5 sekund.
+                try{
+                    Thread.sleep(5000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
 
-                for(int i = 0; i < cList.getActiveClients().size(); i++){
-                    if(cList.getActiveClients().get(i).getIsRunning() == false){
-                        System.out.println("client removed from list: " + cList.getActiveClients().get(i).getUser_name());
-                        cList.getActiveClients().remove(i);
+                List<ClientHandler> activeClients = ClientList.getInstance().getActiveClients();
+
+                for(int i = 0; i < activeClients.size(); i++){
+                    if(activeClients.get(i).getIsRunning() == false){
+                        System.out.println("client removed from list: " + activeClients.get(i).getUser_name());
+                        activeClients.remove(i);
                         i--;
                     }
                 }
             }
         });
-        //TODO: work this
+        //Thread der sover et sekund og derefter fjerner den 1 fra heartbeat.
         Thread checkHeartbeat = new Thread(() -> {
             while(isRunning){
-                ClientList cList = ClientList.getInstance();
                 try{
-                Thread.sleep(1000);
+                    Thread.sleep(1000);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
-                for(int i = 0; i < cList.getActiveClients().size(); i++){
+                List<ClientHandler> activeClients = ClientList.getInstance().getActiveClients();
+                for(int i = 0; i < activeClients.size(); i++){
 
-                        int heartbeat = cList.getActiveClients().get(i).getHeartbeat();
+                        int heartbeat = activeClients.get(i).getHeartbeat();
                         if(heartbeat <= 0){
-                            cList.getActiveClients().remove(i);
+                            activeClients.remove(i);
                             i--;
                         }
                         else {
-                            cList.getActiveClients().get(i).setHeartbeat(heartbeat - 1);
+                            activeClients.get(i).setHeartbeat(heartbeat - 1);
                             //System.out.println(activeClients.get(i).getUser_name() + ": heartbeart set: " + (heartbeat - 1));
                         }
 
                 }
             }
         });
+        //navngiv og start threads
         checkHeartbeat.setName("Thread-HeartBeatchecker");
         checkHeartbeat.start();
         cleanActiveClientsList.setName("Thread-cleanActiveClientsList");
@@ -110,10 +110,6 @@ public class Server {
                 e.printStackTrace();
             }
         }
-
-        //TODO: CHeck Logger klasse
-        //
-
     }
 }
 

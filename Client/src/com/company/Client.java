@@ -15,7 +15,6 @@ public class Client {
     static String server_ip;
     static int server_port;
     Socket socket;
-    static boolean isRunning = true;
 
     public Client(String server_ip, int server_port, String user_name){
         this.server_ip = server_ip;
@@ -45,18 +44,22 @@ public class Client {
         //Send username som det første
         output.writeUTF(user_name);
 
+
+
+
         //Scanner
         Scanner scanner = new Scanner(System.in);
 
         //Opret Separat Thread til at recieve messages.
         Thread recieve = new Thread(() -> {
-            String msg;
-            while(isRunning == true){
 
+            String msg;
+            while(Main.isRunning == true){
                 try{
                     msg = input.readUTF();
                     switch (msg){
                         case "QUIT":
+                            Main.isRunning = false;
                             input.close();
                             socket.close();
                             break;
@@ -74,7 +77,7 @@ public class Client {
         });
 
         Thread heartbeat = new Thread(() -> {
-           while(isRunning == true){
+           while(Main.isRunning == true){
                try{
                    Thread.sleep(59000   );
                    output.writeUTF("IMAV");
@@ -92,9 +95,10 @@ public class Client {
         String msg = "";
 
         //Send messages
-        while(isRunning == true){
+        while(Main.isRunning == true){
             msg = scanner.nextLine();
             switch (msg){
+                //close prorgam
                 case "QUIT":
                     output.writeUTF("QUIT");
                     output.flush();
@@ -102,16 +106,22 @@ public class Client {
                     heartbeat.interrupt();
                     recieve.interrupt();
                     socket.close();
-                    isRunning = false;
+                    Main.isRunning = false;
                     break;
+                //DATA message
                 default:
-                    output.writeUTF(msg);
+                    if(msg.matches("^DATA [A-Za-z0-9]{1,}:.*")){
+                        String[] temp = msg.split(":");
+                        output.writeUTF(temp[1]);
+                    }
+                    else{
+                        System.out.println("Error write QUIT or DATA username:message");
+                    }
                     break;
             }
 
 
         }
-
     }
 }
 
