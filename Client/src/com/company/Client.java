@@ -1,7 +1,5 @@
 package com.company;
 
-import com.company.threads.Messages;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,10 +14,10 @@ public class Client {
     static int server_port;
     Socket socket;
 
-    public Client(String server_ip, int server_port, String user_name){
+    public Client(String user_name, String server_ip, int server_port){
+        this.user_name = user_name;
         this.server_ip = server_ip;
         this.server_port = server_port;
-        this.user_name = user_name;
 
         try {
             start();
@@ -52,7 +50,6 @@ public class Client {
 
         //Opret Separat Thread til at recieve messages.
         Thread recieve = new Thread(() -> {
-
             String msg;
             while(Main.isRunning == true){
                 try{
@@ -70,9 +67,6 @@ public class Client {
                 }catch (IOException e){
                     e.printStackTrace();
                 }
-
-
-
             }
         });
 
@@ -110,7 +104,8 @@ public class Client {
                     break;
                 //DATA message
                 default:
-                    if(msg.matches("^DATA [A-Za-z0-9]{1,}:.*")){
+                    //if(msg.matches("^DATA [A-Za-z0-9]{1,12}:.*")){
+                    if(InputVerification.chkDataMSG(msg)){
                         String[] temp = msg.split(":");
                         output.writeUTF(temp[1]);
                     }

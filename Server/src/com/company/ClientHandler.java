@@ -18,7 +18,7 @@ public class ClientHandler implements Runnable {
 
     public ClientHandler(Socket socket, DataInputStream input, DataOutputStream output, String user_name) {
         try{
-            output.writeUTF("J_OK");
+            output.writeUTF("From server: J_OK");
         }catch (IOException e){
             e.printStackTrace();
         }
