@@ -28,8 +28,6 @@ public class Client {
 
     public void start() throws IOException {
 
-        //List<Thread> threads = new ArrayList<>();
-
         //Convert String ip til InetAddress ip.
         InetAddress ip = InetAddress.getByName(server_ip);
 
@@ -41,12 +39,6 @@ public class Client {
 
         //Send username som det første
         output.writeUTF(user_name);
-
-
-
-
-        //Scanner
-        Scanner scanner = new Scanner(System.in);
 
         //Opret Separat Thread til at recieve messages.
         Thread recieve = new Thread(() -> {
@@ -90,7 +82,7 @@ public class Client {
 
         //Send messages
         while(Main.isRunning == true){
-            msg = scanner.nextLine();
+            msg = InputHandler.readString();
             switch (msg){
                 //close prorgam
                 case "QUIT":
@@ -102,9 +94,9 @@ public class Client {
                     socket.close();
                     Main.isRunning = false;
                     break;
-                //DATA message
+
+                    //DATA message
                 default:
-                    //if(msg.matches("^DATA [A-Za-z0-9]{1,12}:.*")){
                     if(InputVerification.chkDataMSG(msg)){
                         String[] temp = msg.split(":");
                         output.writeUTF(temp[1]);
@@ -114,8 +106,6 @@ public class Client {
                     }
                     break;
             }
-
-
         }
     }
 }

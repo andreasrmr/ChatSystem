@@ -53,7 +53,6 @@ public class Server {
                 }
                 List<ClientHandler> activeClients = ClientList.getInstance().getActiveClients();
                 for(int i = 0; i < activeClients.size(); i++){
-
                         int heartbeat = activeClients.get(i).getHeartbeat();
                         if(heartbeat <= 0){
                             activeClients.remove(i);

@@ -22,7 +22,6 @@ public class ClientHandler implements Runnable {
         }catch (IOException e){
             e.printStackTrace();
         }
-
         this.socket = socket;
         this.input = input;
         this.output = output;
@@ -68,6 +67,17 @@ public class ClientHandler implements Runnable {
         }
 
     }
+    public void msgAll(String msg) throws IOException{
+        ClientList cList = ClientList.getInstance();
+
+        for(ClientHandler c : cList.getActiveClients()){
+            if(!c.getUser_name().equals(this.user_name)){
+                c.getOutput().writeUTF(this.user_name + ": " + msg);
+            }
+        }
+    }
+
+
     public void stopRunning(){
         isRunning = false;
     }
@@ -103,4 +113,7 @@ public class ClientHandler implements Runnable {
     public void setHeartbeat(int heartbeat) {
         this.heartbeat = heartbeat;
     }
+
+
+
 }

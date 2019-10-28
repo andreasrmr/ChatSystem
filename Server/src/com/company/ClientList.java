@@ -22,7 +22,6 @@ public class ClientList {
     public static List<ClientHandler> getActiveClients() {
         return activeClients;
     }
-
     public static void addActiveClient(ClientHandler c) {
         activeClients.add(c);
     }

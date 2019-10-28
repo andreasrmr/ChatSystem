@@ -15,14 +15,14 @@ public class Main {
         System.out.println("Example: JOIN username, 127.0.0.1:1234");
         while(isRunning){
             //input fra bruger join msg / exit
-            String command = InputHandler.readString();
+            String userInput = InputHandler.readString();
 
-            if(InputVerification.chkExitMSG(command)){
+            if(InputVerification.chkExitMSG(userInput)){
                 isRunning = false;
             }
-            else if(InputVerification.chkJoinMSG(command)){
+            else if(InputVerification.chkJoinMSG(userInput)){
 
-                String[] info = InputHandler.splitJoinMSG(command);
+                String[] info = InputHandler.splitJoinMSG(userInput);
                 String user_name = info[0];
                 String server_ip = info[1];
                 int server_port = Integer.parseInt(info[2]);
