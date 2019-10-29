@@ -19,6 +19,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket, DataInputStream input, DataOutputStream output, String user_name) {
         try{
             output.writeUTF("From server: J_OK");
+            output.flush();
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -37,7 +38,6 @@ public class ClientHandler implements Runnable {
             //Lyt på beskeder fra klient
             while(isRunning){
                 receivedMsg = input.readUTF();
-                ClientList cList = ClientList.getInstance();
                 switch (receivedMsg){
                     case "QUIT":
                         output.writeUTF("QUIT");
@@ -52,13 +52,7 @@ public class ClientHandler implements Runnable {
                         this.heartbeat = 60;
                         break;
                     default:
-                        for(ClientHandler c : cList.getActiveClients()){
-                            if(!c.getUser_name().equals(this.user_name)){
-                                c.getOutput().writeUTF(this.user_name + ": " + receivedMsg);
-                            }
-                        }
-                        //udskriv til server
-                        System.out.println(this.user_name + ": " + receivedMsg);
+                        msgAll(receivedMsg);
                         break;
                 }
             }
@@ -67,14 +61,8 @@ public class ClientHandler implements Runnable {
         }
 
     }
-    public void msgAll(String msg) throws IOException{
-        ClientList cList = ClientList.getInstance();
-
-        for(ClientHandler c : cList.getActiveClients()){
-            if(!c.getUser_name().equals(this.user_name)){
-                c.getOutput().writeUTF(this.user_name + ": " + msg);
-            }
-        }
+    public void msgAll(String msg) {
+        Server.multiCast(msg, this.socket.getPort());
     }
 
 

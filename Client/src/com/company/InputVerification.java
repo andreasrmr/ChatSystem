@@ -28,7 +28,7 @@ public class InputVerification {
 
     //checker command er chkExitMSG.
     public static boolean chkExitMSG(String command){
-        if(command.matches("EXIT")){
+        if(command.matches("QUIT")){
             return true;
         }
         return false;

@@ -8,8 +8,11 @@ public class Main {
 
         //Setup port
         int port_number = 1234;
-
         Server server = new Server(port_number);
+        Thread threadServer = new Thread(server);
+        threadServer.start();
+
+        //gør noget her.
 
     }
 }
