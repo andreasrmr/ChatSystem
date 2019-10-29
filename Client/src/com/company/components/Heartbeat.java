@@ -8,7 +8,6 @@ public class Heartbeat extends Client implements Runnable {
 
     public Heartbeat() {
     }
-
     @Override
     public void run() {
 

@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 
 public class Client implements Runnable{
@@ -61,6 +62,7 @@ public class Client implements Runnable{
                         }
                     }catch (IOException e){
                         e.printStackTrace();
+                        Main.isRunning = false;
                     }
                 }
             });
@@ -89,7 +91,7 @@ public class Client implements Runnable{
                             output.flush();
                         }
                         else{
-                            System.out.println("Error write QUIT or DATA username:message");
+                            System.out.println("Error write QUIT or DATA:message");
                         }
                         break;
                 }
@@ -97,6 +99,7 @@ public class Client implements Runnable{
 
         }catch (IOException e){
             e.printStackTrace();
+            Main.isRunning = false;
         }
 
 

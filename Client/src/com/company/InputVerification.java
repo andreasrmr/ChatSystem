@@ -20,7 +20,7 @@ public class InputVerification {
     //kolon imellem brugernavn og besked
     //Besked uendelig lang alle tegn tilladt.
     public static boolean chkDataMSG(String command){
-        if(command.matches("^DATA [A-Za-z0-9_-]{1,12}:.*")){
+        if(command.matches("^DATA:.*")){
             return true;
         }
         return false;

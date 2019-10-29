@@ -32,7 +32,7 @@ public class Server implements Runnable{
             while(isRunning){
                 try {
                     //afvent på klient forbinder.
-                    System.out.println("** waiting for clients **");
+                    System.out.println("waiting for clients");
                     socket = serverSocket.accept();
                     System.out.println("New client request accepted" + socket);
 
@@ -46,8 +46,7 @@ public class Server implements Runnable{
                         user_name = input.readUTF();
                     }
                     System.out.println("Username: " + user_name + " Received");
-                    output.writeUTF("From server: " + user_name + " was added");
-                    output.flush();
+
                     ClientHandler clientHandler = new ClientHandler(socket, input, output, user_name);
                     Thread clientThread = new Thread(clientHandler);
                     clientThread.start();
@@ -60,20 +59,21 @@ public class Server implements Runnable{
                 }
             }
         }
-        //Metode sender besked ud til alle klienter.
-        public static void multiCast(String msg, int port){
+        //Metode sender besked ud til alle klienter. (undtagen sig selv)
+        public static void broadcast(String msg, int port){
             for(ClientHandler c : clientHandlers){
                 if(c.getSocket().getPort() != port){
                     try{
                         c.getOutput().writeUTF(c.getUser_name() + ": " + msg);
+                        c.getOutput().flush();
                     }catch (IOException e){
                         e.printStackTrace();
                     }
 
                 }
-
             }
         }
+
 
         /*
         //ryd op i aktive klient liste. (Virker ikke efter jeg lavede en separat synchronized klasse der indeholdt listen)

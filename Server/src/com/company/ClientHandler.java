@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import static com.company.Server.clientHandlers;
+
 public class ClientHandler implements Runnable {
 
     private DataInputStream input;
@@ -17,17 +19,16 @@ public class ClientHandler implements Runnable {
     public ClientHandler(){}
 
     public ClientHandler(Socket socket, DataInputStream input, DataOutputStream output, String user_name) {
-        try{
-            output.writeUTF("From server: J_OK");
-            output.flush();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+
+
         this.socket = socket;
         this.input = input;
         this.output = output;
         this.user_name = user_name;
         this.heartbeat = 60;
+
+        singlecast(user_name + " was added");
+        singlecast("J_OK");
     }
 
     //lyt på beskeder og fra klienter.
@@ -62,7 +63,15 @@ public class ClientHandler implements Runnable {
 
     }
     public void msgAll(String msg) {
-        Server.multiCast(msg, this.socket.getPort());
+        Server.broadcast(msg, this.socket.getPort());
+    }
+    //metode bruges til at sende besked til én client
+    public void singlecast(String msg) {
+        try {
+            this.output.writeUTF("Server: " + msg);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 
