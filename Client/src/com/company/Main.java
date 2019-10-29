@@ -1,7 +1,5 @@
 package com.company;
 
-import com.company.components.Client;
-
 public class Main {
 
     public static boolean isRunning;

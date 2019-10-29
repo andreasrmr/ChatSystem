@@ -2,11 +2,15 @@ package com.company.components;
 
 import com.company.Main;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 
-public class Recieve extends Client implements Runnable {
+public class Recieve implements Runnable {
 
-    public Recieve() {
+    DataInputStream input;
+
+    public Recieve(DataInputStream input) {
+        this.input = input;
     }
     @Override
     public void run() {
@@ -18,7 +22,6 @@ public class Recieve extends Client implements Runnable {
                     case "QUIT":
                         Main.isRunning = false;
                         input.close();
-                        socket.close();
                         break;
                     default:
                         System.out.println(msg);
@@ -26,6 +29,7 @@ public class Recieve extends Client implements Runnable {
                 }
             }catch (IOException e){
                 e.printStackTrace();
+                Main.isRunning = false;
             }
         }
     }

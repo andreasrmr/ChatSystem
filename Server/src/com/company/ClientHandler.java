@@ -34,12 +34,16 @@ public class ClientHandler implements Runnable {
     //lyt på beskeder og fra klienter.
     @Override
     public void run() {
-        String receivedMsg;
+        String encryptedMsg;
         try {
             //Lyt på beskeder fra klient
             while(isRunning){
-                receivedMsg = input.readUTF();
-                switch (receivedMsg){
+
+                encryptedMsg = input.readUTF();
+                final String secretKey = "WorrisomePurveyorGlorify3";
+                String decryptedString = AES.decrypt(encryptedMsg, secretKey);
+
+                switch (decryptedString){
                     case "QUIT":
                         output.writeUTF("QUIT");
                         output.flush();
@@ -53,7 +57,7 @@ public class ClientHandler implements Runnable {
                         this.heartbeat = 60;
                         break;
                     default:
-                        msgAll(receivedMsg);
+                        msgAll(decryptedString);
                         break;
                 }
             }
