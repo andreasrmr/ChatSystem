@@ -39,7 +39,6 @@ public class Send implements Runnable {
                     }
                     break;
             }
-
         }
     }
     public static void sendEncryptedMsg(String msg){

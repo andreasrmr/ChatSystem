@@ -15,20 +15,19 @@ public class Recieve implements Runnable {
     @Override
     public void run() {
         String encryptedMsg = "";
-        String msg = "";
+        String decryptedMsg = "";
         while(Main.isRunning == true){
             try{
                 encryptedMsg = input.readUTF();
+                decryptedMsg = AES.decrypt(encryptedMsg, AES.secretKeyDefined);
 
-                msg = AES.decrypt(encryptedMsg, AES.secretKeyDefined);
-
-                switch (msg){
+                switch (decryptedMsg){
                     case "QUIT":
                         Main.isRunning = false;
                         input.close();
                         break;
                     default:
-                        System.out.println(msg);
+                        System.out.println(decryptedMsg);
                         break;
                 }
             }catch (IOException e){

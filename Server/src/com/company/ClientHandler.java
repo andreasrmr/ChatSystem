@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.company.Server.clientHandlers;
 
@@ -14,7 +16,6 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private String user_name;
     boolean isRunning = true;
-    int heartbeat;
 
     public ClientHandler(){}
 
@@ -25,15 +26,20 @@ public class ClientHandler implements Runnable {
         this.input = input;
         this.output = output;
         this.user_name = user_name;
-        this.heartbeat = 60;
-
         singlecast(user_name + " was added");
         singlecast("J_OK");
+
+
     }
 
     //lyt på beskeder og fra klienter.
     @Override
     public void run() {
+
+
+
+
+
         String encryptedMsg = "";
         try {
             //Lyt på beskeder fra klient
@@ -44,20 +50,31 @@ public class ClientHandler implements Runnable {
 
                 switch (decryptedString){
                     case "QUIT":
-                        //TODO virker, men skal laves ting
                         singlecast(decryptedString);
                         input.close();
                         output.close();
                         socket.close();
                         isRunning = false;
                         System.out.println(user_name + " quitted");
+                        Server.removeUserFromUserList(socket.getPort());
                         break;
                     case "IMAV":
+                        //TODO: ikke funtionelt
                         System.out.println("IMAV recieved from: " + user_name);
-                        this.heartbeat = 60;
+                        List<Thread> threadPool = new ArrayList<>();
+                        Thread t = new Thread(() -> {
+                            try{
+                                Thread.sleep(59);
+                            }catch (InterruptedException e){
+                                e.printStackTrace();
+                            }
+                        });
+                        t.start();
+
+
                         break;
                     default:
-                        msgAll(decryptedString);
+                        clientSend(decryptedString);
                         break;
                 }
             }
@@ -66,9 +83,9 @@ public class ClientHandler implements Runnable {
         }
 
     }
-    public void msgAll(String msg) {
+    public void clientSend(String msg) {
         String encryptedMsg = AES.encrypt((user_name + ": " + msg), AES.secretKeyDefined);
-        Server.broadcast(encryptedMsg, this.socket.getPort());
+        Server.clientSend(encryptedMsg, this.socket.getPort());
     }
     //metode bruges til at sende besked til én client
     public void singlecast(String msg) {
@@ -108,15 +125,5 @@ public class ClientHandler implements Runnable {
     public void setIsRunning(boolean flag) {
         this.isRunning = flag;
     }
-
-    public int getHeartbeat() {
-        return heartbeat;
-    }
-
-    public void setHeartbeat(int heartbeat) {
-        this.heartbeat = heartbeat;
-    }
-
-
 
 }

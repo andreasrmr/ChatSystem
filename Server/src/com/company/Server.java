@@ -53,14 +53,27 @@ public class Server implements Runnable{
 
                     threads.add(clientThread);
                     clientHandlers.add(clientHandler);
+                    //send list of active users to all clients
+                    broadcast(AES.encrypt(getActiveUserList(), AES.secretKeyDefined));
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-        //Metode sender besked ud til alle klienter. (undtagen sig selv)
-        public static void broadcast(String encryptedMsg, int port){
+        //Metode sender besked ud til alle klienter (server message)
+        public static void broadcast(String encryptedMsg){
+                for(ClientHandler c : clientHandlers){
+                    try{
+                        c.getOutput().writeUTF(encryptedMsg);
+                        c.getOutput().flush();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+        }
+    //Metode sender besked ud til alle klienter. (user message)
+        public static void clientSend(String encryptedMsg, int port){
             for(ClientHandler c : clientHandlers){
                 if(c.getSocket().getPort() != port){
                     try{
@@ -69,7 +82,22 @@ public class Server implements Runnable{
                     }catch (IOException e){
                         e.printStackTrace();
                     }
+                }
+            }
+        }
 
+        public static String getActiveUserList(){
+            String userList = "Userlist updated: \n";
+            for(ClientHandler c : clientHandlers){
+                userList += c.getUser_name() + "\n";
+            }
+            return userList;
+        }
+        public static void removeUserFromUserList(int port){
+            for(int i = 0; i < clientHandlers.size(); i++){
+                if(clientHandlers.get(i).getSocket().getPort() == port){
+                    clientHandlers.remove(i);
+                    broadcast(AES.encrypt(getActiveUserList(), AES.secretKeyDefined));
                 }
             }
         }
