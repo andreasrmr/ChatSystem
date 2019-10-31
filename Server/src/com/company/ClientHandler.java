@@ -34,20 +34,20 @@ public class ClientHandler implements Runnable {
     //lyt på beskeder og fra klienter.
     @Override
     public void run() {
-        String encryptedMsg;
+        String encryptedMsg = "";
         try {
             //Lyt på beskeder fra klient
             while(isRunning){
 
                 encryptedMsg = input.readUTF();
-                final String secretKey = "WorrisomePurveyorGlorify3";
-                String decryptedString = AES.decrypt(encryptedMsg, secretKey);
+                String decryptedString = AES.decrypt(encryptedMsg, AES.secretKeyDefined);
 
                 switch (decryptedString){
                     case "QUIT":
-                        output.writeUTF("QUIT");
-                        output.flush();
+                        //TODO virker, men skal laves ting
+                        singlecast(decryptedString);
                         input.close();
+                        output.close();
                         socket.close();
                         isRunning = false;
                         System.out.println(user_name + " quitted");
@@ -67,17 +67,19 @@ public class ClientHandler implements Runnable {
 
     }
     public void msgAll(String msg) {
-        Server.broadcast(msg, this.socket.getPort());
+        String encryptedMsg = AES.encrypt((user_name + ": " + msg), AES.secretKeyDefined);
+        Server.broadcast(encryptedMsg, this.socket.getPort());
     }
     //metode bruges til at sende besked til én client
     public void singlecast(String msg) {
         try {
-            this.output.writeUTF("Server: " + msg);
+            String encryptedMsg = AES.encrypt((user_name + ": " + msg), AES.secretKeyDefined);
+            this.output.writeUTF(encryptedMsg);
+            this.output.flush();
         }catch (IOException e){
             e.printStackTrace();
         }
     }
-
 
     public void stopRunning(){
         isRunning = false;

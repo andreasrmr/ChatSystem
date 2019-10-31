@@ -60,11 +60,11 @@ public class Server implements Runnable{
             }
         }
         //Metode sender besked ud til alle klienter. (undtagen sig selv)
-        public static void broadcast(String msg, int port){
+        public static void broadcast(String encryptedMsg, int port){
             for(ClientHandler c : clientHandlers){
                 if(c.getSocket().getPort() != port){
                     try{
-                        c.getOutput().writeUTF(c.getUser_name() + ": " + msg);
+                        c.getOutput().writeUTF(encryptedMsg);
                         c.getOutput().flush();
                     }catch (IOException e){
                         e.printStackTrace();

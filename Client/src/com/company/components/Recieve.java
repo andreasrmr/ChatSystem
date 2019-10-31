@@ -14,10 +14,14 @@ public class Recieve implements Runnable {
     }
     @Override
     public void run() {
-        String msg;
+        String encryptedMsg = "";
+        String msg = "";
         while(Main.isRunning == true){
             try{
-                msg = input.readUTF();
+                encryptedMsg = input.readUTF();
+
+                msg = AES.decrypt(encryptedMsg, AES.secretKeyDefined);
+
                 switch (msg){
                     case "QUIT":
                         Main.isRunning = false;

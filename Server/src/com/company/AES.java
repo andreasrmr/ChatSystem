@@ -14,8 +14,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
 
+    public static final String secretKeyDefined = "WorrisomePurveyorGlorify3";
     private static SecretKeySpec secretKey;
     private static byte[] key;
+
 
     public static void setKey(String myKey)
     {

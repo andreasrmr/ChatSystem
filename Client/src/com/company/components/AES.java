@@ -1,7 +1,9 @@
 package com.company.components;
 
 //Advanced Encryption Standard
-//Fundet her: https://howtodoinjava.com/security/java-aes-encryption-example/ (SHA-1)
+//Fundet her: https://howtodoinjava.com/security/java-aes-encryption-example/ (AES - 1?)
+
+//Andet eksempel fundet her: https://howtodoinjava.com/security/aes-256-encryption-decryption/ (AES-256)
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -16,6 +18,7 @@ public class AES {
 
     private static SecretKeySpec secretKey;
     private static byte[] key;
+    public static final String secretKeyDefined = "WorrisomePurveyorGlorify3";
 
     public static void setKey(String myKey)
     {
