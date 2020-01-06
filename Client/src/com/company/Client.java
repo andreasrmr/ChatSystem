@@ -1,9 +1,8 @@
 package com.company;
 
-import com.company.Main;
+import com.company.components.Heartbeat;
 import com.company.components.Recieve;
 import com.company.components.Send;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,8 +15,6 @@ public class Client implements Runnable{
     static String server_ip;
     static int server_port;
     Socket socket;
-    DataOutputStream output;
-    DataInputStream input;
 
     public Client() {
     }
@@ -41,6 +38,7 @@ public class Client implements Runnable{
 
             //Send username som det første
             output.writeUTF(user_name);
+            output.flush();
 
             //opret recieve thread.
             Thread threadRecieve = new Thread(new Recieve(input));
@@ -48,12 +46,17 @@ public class Client implements Runnable{
             //Opret send thread
             Thread threadSend = new Thread(new Send(output));
 
+            //opret heartbeat thread
+            Thread threadHeartBeat = new Thread(new Heartbeat());
+
             //Start threads.
             threadRecieve.start();
             threadSend.start();
+            threadHeartBeat.start();
+
 
             while(Main.isRunning){
-                //Main thread.
+
             }
 
 

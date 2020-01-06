@@ -4,10 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.company.Server.clientHandlers;
+import static com.company.Server.*;
 
 public class ClientHandler implements Runnable {
 
@@ -16,6 +14,7 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private String user_name;
     boolean isRunning = true;
+    int heartbeat = 59;
 
     public ClientHandler(){}
 
@@ -26,19 +25,29 @@ public class ClientHandler implements Runnable {
         this.input = input;
         this.output = output;
         this.user_name = user_name;
-        singlecast(user_name + " was added");
-        singlecast("J_OK");
+        singlecast("J_OK", "");
 
+        Thread heartbeat = new Thread(() -> {
+            while(Server.isRunning){
+                try{
+                    Thread.sleep(1000);
+                    this.heartbeat--;
+                    if(this.heartbeat < 0){
+                        Server.removeUserFromUserList(socket.getPort());
+                    }
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        heartbeat.start();
 
     }
 
     //lyt på beskeder og fra klienter.
     @Override
     public void run() {
-
-
-
-
 
         String encryptedMsg = "";
         try {
@@ -50,7 +59,7 @@ public class ClientHandler implements Runnable {
 
                 switch (decryptedString){
                     case "QUIT":
-                        singlecast(decryptedString);
+                        singlecast(decryptedString, this.user_name);
                         input.close();
                         output.close();
                         socket.close();
@@ -58,20 +67,12 @@ public class ClientHandler implements Runnable {
                         System.out.println(user_name + " quitted");
                         Server.removeUserFromUserList(socket.getPort());
                         break;
+                    case "LIST":
+                        singlecast(getActiveUserList(), "");
+                        break;
                     case "IMAV":
-                        //TODO: ikke funtionelt
-                        System.out.println("IMAV recieved from: " + user_name);
-                        List<Thread> threadPool = new ArrayList<>();
-                        Thread t = new Thread(() -> {
-                            try{
-                                Thread.sleep(59);
-                            }catch (InterruptedException e){
-                                e.printStackTrace();
-                            }
-                        });
-                        t.start();
-
-
+                        System.out.println("IMAV recieved from: " + socket);
+                        this.heartbeat = 60;
                         break;
                     default:
                         clientSend(decryptedString);
@@ -83,14 +84,15 @@ public class ClientHandler implements Runnable {
         }
 
     }
+    //Bruges til at sende fra en bruger til alle andre
     public void clientSend(String msg) {
         String encryptedMsg = AES.encrypt((user_name + ": " + msg), AES.secretKeyDefined);
         Server.clientSend(encryptedMsg, this.socket.getPort());
     }
     //metode bruges til at sende besked til én client
-    public void singlecast(String msg) {
+    public void singlecast(String msg, String user_name) {
         try {
-            String encryptedMsg = AES.encrypt((user_name + ": " + msg), AES.secretKeyDefined);
+            String encryptedMsg = AES.encrypt((user_name + ":" + msg), AES.secretKeyDefined);
             this.output.writeUTF(encryptedMsg);
             this.output.flush();
         }catch (IOException e){

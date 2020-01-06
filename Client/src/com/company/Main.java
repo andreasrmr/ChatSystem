@@ -14,8 +14,8 @@ public class Main {
 
             //TODO: er hardcoded for hurtigere test afkommenter så bruger kan lave input
             //input fra bruger join msg / exit
-            //String userInput = InputHandler.readString();
-            String userInput = "JOIN Hans, 127.0.0.1:1234";
+            String userInput = InputHandler.readString();
+            //String userInput = "JOIN Hans, 127.0.0.1:1234";
 
             if(InputVerification.chkExitMSG(userInput)){
                 isRunning = false;

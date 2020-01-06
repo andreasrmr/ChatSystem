@@ -27,6 +27,15 @@ public class Send implements Runnable {
                 case "QUIT":
                     sendEncryptedMsg(msg);
                     Main.isRunning = false;
+                    try{
+                        this.output.close();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+
+                    break;
+                case "LIST":
+                    sendEncryptedMsg("LIST");
                     break;
                 //DATA message
                 default:
@@ -43,6 +52,7 @@ public class Send implements Runnable {
     }
     public static void sendEncryptedMsg(String msg){
         String encryptedString = AES.encrypt(msg, AES.secretKeyDefined);
+
         try{
             output.writeUTF(encryptedString);
             output.flush();
