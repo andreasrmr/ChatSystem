@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable {
         Thread heartbeat = new Thread(() -> {
             while(Server.isRunning){
                 try{
-                    Thread.sleep(1000);
+                    Thread.sleep(35000);
                     this.heartbeat--;
                     if(this.heartbeat < 0){
                         Server.removeUserFromUserList(socket.getPort());

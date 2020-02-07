@@ -10,7 +10,7 @@ public class ClientHandlerSingleton {
     public static List<ClientHandler> clientHandlers;
 
     private ClientHandlerSingleton(){
-        clientHandlers = Collections.synchronizedList(new ArrayList<>());
+        clientHandlers = new ArrayList<>();
     }
 
     public synchronized static ClientHandlerSingleton getInstance(){

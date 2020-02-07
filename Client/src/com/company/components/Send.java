@@ -20,7 +20,7 @@ public class Send implements Runnable {
     public void run() {
         String msg = "";
         while(Main.isRunning == true){
-            msg = InputHandler.readString();
+                msg = InputHandler.readString();
 
             switch (msg){
                 //close prorgam
